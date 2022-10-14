@@ -28,6 +28,10 @@ const isDateValid = (givenDate) => {
   // to check whether a date is valid
   const [year, month, date] = givenDate.split('-').map(d => +d)
   const monthWith30Days = [4, 6, 9, 11]
+  console.log(year, month, date)
+  if (isNaN(year) || isNaN(month) || isNaN(date)) {
+    return false
+  }
   if (year < 1800 || year > 9999 || month < 1 || month > 12 || date < 1 || date > 31) {
     return false
   }
@@ -64,10 +68,9 @@ const dateOp = (date, res) => {
   // if date id present
   const validity = isDateValid(date)
   let newDate = new Date(date)
-  let utcDate
   if (validity) {
-    unixTime = newDate.getTime()
-    utcDate = toUTCFormat(newDate)
+    const unixTime = newDate.getTime()
+    const utcDate = toUTCFormat(newDate)
     res.json({ "unix": unixTime, "utc": utcDate })
   } else {
     res.json({ "error": "Invalid Date" })
@@ -77,6 +80,9 @@ const dateOp = (date, res) => {
 const noDateOp = (res) => {
   // if date is not present
   let newDate = new Date()
+  const unixTime = newDate.getTime()
+  const utcDate = toUTCFormat(newDate)
+  res.json({ "unix": unixTime, "utc": utcDate })
 }
 
 // date to timestamp 
