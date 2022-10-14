@@ -44,15 +44,49 @@ const isDateValid = (givenDate) => {
   return true
 }
 
+const format = (num) => {
+  return num < 10 ? '0' + num : num
+}
+
+const toUTCFormat = (givenDate) => {
+  // to convert date in format: Thu, 01 Jan 1970 00:00:00 GMT
+  const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+  const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
+  const day = days[givenDate.getDay()]
+  const date = format(givenDate.getDate())
+  const year = givenDate.getFullYear()
+  const month = months[givenDate.getMonth() - 1]
+  console.log(givenDate, `${day}, ${date} ${month} ${year} 00:00:00 GMT`);
+  return `${day}, ${date} ${month} ${year} 00:00:00 GMT`
+}
+
+const dateOp = (date, res) => {
+  // if date id present
+  const validity = isDateValid(date)
+  let newDate = new Date(date)
+  let utcDate
+  if (validity) {
+    unixTime = newDate.getTime()
+    utcDate = toUTCFormat(newDate)
+    res.json({ "unix": unixTime, "utc": utcDate })
+  } else {
+    res.json({ "error": "Invalid Date" })
+  }
+}
+
+const noDateOp = (res) => {
+  // if date is not present
+  let newDate = new Date()
+}
+
 // date to timestamp 
 app.get("/api/:date", (req, res) => {
   const { date } = req.params
-  const validity = isDateValid(date)
-  let newDate = new Date(date)
-  if (validity) {
-    newDate = newDate.getTime()
+  if (date) {
+    dateOp(date, res)
+  } else {
+    noDateOp(res)
   }
-  res.json({ "unix": newDate })
 })
 
 // listen for requests :)
