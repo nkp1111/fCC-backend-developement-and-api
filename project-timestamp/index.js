@@ -44,6 +44,17 @@ const isDateValid = (givenDate) => {
   return true
 }
 
+// date to timestamp 
+app.get("/api/:date", (req, res) => {
+  const { date } = req.params
+  const validity = isDateValid(date)
+  let newDate = new Date(date)
+  if (validity) {
+    newDate = newDate.getTime()
+  }
+  res.json({ "unix": newDate })
+})
+
 // listen for requests :)
 var listener = app.listen(process.env.PORT, function () {
   console.log('Your app is listening on port ' + listener.address().port);
