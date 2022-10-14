@@ -24,14 +24,10 @@ app.get("/api/hello", function (req, res) {
   res.json({ greeting: 'hello API' });
 });
 
-const isDateValid = (givenDate) => {
-  // to check whether a date is valid
-  const [year, month, date] = givenDate.split('-').map(d => +d)
+const isDate = (newDate) => {
+  // to check whether given date, month and year is valid
   const monthWith30Days = [4, 6, 9, 11]
-
-  if (isNaN(year) || isNaN(month) || isNaN(date)) {
-    return false
-  }
+  const [year, month, date] = newDate.map(d => +d)
   if (year < 1800 || year > 9999 || month < 1 || month > 12 || date < 1 || date > 31) {
     return false
   }
@@ -48,6 +44,21 @@ const isDateValid = (givenDate) => {
   return true
 }
 
+const isDateValid = (givenDate) => {
+  // to check whether a date is valid
+  console.log(givenDate)
+  let newDate = givenDate.split('-')
+  if (newDate.length === 3) {
+    return isDate(newDate) ? 'date' : false
+  }
+  if (newDate.length > 3) {
+    return false
+  }
+  if (newDate.length === 1) {
+    return 'timestamp'
+  }
+}
+
 const format = (num) => {
   return num < 10 ? '0' + num : num
 }
@@ -59,21 +70,25 @@ const toUTCFormat = (givenDate) => {
   const day = days[givenDate.getDay()]
   const date = format(givenDate.getDate())
   const year = givenDate.getFullYear()
-  const month = months[givenDate.getMonth() - 1]
+  const month = months[givenDate.getMonth()]
   // console.log(givenDate,`${day}, ${date} ${month} ${year} 00:00:00 GMT`); 
   return `${day}, ${date} ${month} ${year} 00:00:00 GMT`
 }
 
 const dateOp = (date, res) => {
-  // if date id present
+  // if date is present
   const validity = isDateValid(date)
   let newDate = new Date(date)
   if (validity) {
+    if (validity === 'timestamp' && date == +date) {
+      newDate = new Date(+date)
+    }
     const unixTime = newDate.getTime()
     const utcDate = toUTCFormat(newDate)
-    res.json({ "unix": unixTime, "utc": utcDate })
+    console.log({ unix: unixTime, utc: utcDate })
+    res.json({ unix: unixTime, utc: utcDate })
   } else {
-    res.json({ "error": "Invalid Date" })
+    res.json({ error: "Invalid Date" })
   }
 }
 
@@ -88,7 +103,6 @@ const noDateOp = (res) => {
 // date to timestamp 
 app.get("/api/:date", (req, res) => {
   const { date } = req.params
-  console.log(date)
   if (date) {
     dateOp(date, res)
   }
