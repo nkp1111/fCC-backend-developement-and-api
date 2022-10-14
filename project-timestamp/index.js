@@ -28,7 +28,7 @@ const isDateValid = (givenDate) => {
   // to check whether a date is valid
   const [year, month, date] = givenDate.split('-').map(d => +d)
   const monthWith30Days = [4, 6, 9, 11]
-  console.log(year, month, date)
+
   if (isNaN(year) || isNaN(month) || isNaN(date)) {
     return false
   }
@@ -60,7 +60,7 @@ const toUTCFormat = (givenDate) => {
   const date = format(givenDate.getDate())
   const year = givenDate.getFullYear()
   const month = months[givenDate.getMonth() - 1]
-  console.log(givenDate, `${day}, ${date} ${month} ${year} 00:00:00 GMT`);
+  // console.log(givenDate,`${day}, ${date} ${month} ${year} 00:00:00 GMT`); 
   return `${day}, ${date} ${month} ${year} 00:00:00 GMT`
 }
 
@@ -88,11 +88,14 @@ const noDateOp = (res) => {
 // date to timestamp 
 app.get("/api/:date", (req, res) => {
   const { date } = req.params
+  console.log(date)
   if (date) {
     dateOp(date, res)
-  } else {
-    noDateOp(res)
   }
+})
+
+app.get("/api/", (req, res) => {
+  noDateOp(res)
 })
 
 // listen for requests :)
