@@ -63,7 +63,7 @@ const format = (num) => {
   return num < 10 ? '0' + num : num
 }
 
-const toUTCFormat = (givenDate) => {
+const toUTCFormat = (givenDate, timestamp = false) => {
   // to convert date in format: Thu, 01 Jan 1970 00:00:00 GMT
   const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
   const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
@@ -72,6 +72,12 @@ const toUTCFormat = (givenDate) => {
   const year = givenDate.getFullYear()
   const month = months[givenDate.getMonth()]
   // console.log(givenDate,`${day}, ${date} ${month} ${year} 00:00:00 GMT`); 
+  if (timestamp === true) {
+    const hour = givenDate.getHours()
+    const minute = givenDate.getMinutes()
+    const second = givenDate.getSeconds()
+    return `${day}, ${date} ${month} ${year} ${hour}:${minute}:${second} GMT`
+  }
   return `${day}, ${date} ${month} ${year} 00:00:00 GMT`
 }
 
@@ -96,7 +102,7 @@ const noDateOp = (res) => {
   // if date is not present
   let newDate = new Date()
   const unixTime = newDate.getTime()
-  const utcDate = toUTCFormat(newDate)
+  const utcDate = toUTCFormat(newDate, true)
   res.json({ "unix": unixTime, "utc": utcDate })
 }
 
