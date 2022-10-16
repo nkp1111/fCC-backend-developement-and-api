@@ -27,6 +27,15 @@ app.post('/api/users', async (req, res) => {
   res.json({ username: user.username, _id: user._id })
 })
 
+app.get('/api/users', async (req, res) => {
+  /* to get the list of all users */
+  const users = await User.find({})
+  const newUser = users.map(user => {
+    return { _id: user._id, username: user.username }
+  })
+  res.send(newUser)
+})
+
 const listener = app.listen(process.env.PORT || 3000, () => {
   console.log('Your app is listening on port ' + listener.address().port)
 })
