@@ -45,6 +45,17 @@ app.post('/api/users/:_id/exercises', async (req, res) => {
   res.json({ username: user.username, description: exercise.description, date: exercise.date.toDateString(), duration: exercise.duration, _id: _id })
 })
 
+app.get('/api/users/:_id/logs', async (req, res) => {
+  const { _id } = req.params
+  const user = await User.findById(_id)
+  const exercises = await Exercise.find({ id: _id })
+  const count = exercises.length
+  const exerciseMapped = exercises.map(exercise => {
+    return { description: exercise.description, duration: exercise.duration, date: exercise.date }
+  })
+  res.json({ username: user.username, count, _id, log: exerciseMapped })
+})
+
 const listener = app.listen(process.env.PORT || 3000, () => {
   console.log('Your app is listening on port ' + listener.address().port)
 })
