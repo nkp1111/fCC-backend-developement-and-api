@@ -10,7 +10,7 @@ mongoose.connect(mySecret).then(() => {
   console.log('Mongoose connected')
 })
 
-const User = require('./model.js')
+const { User, Exercise } = require('./model.js')
 
 app.use(cors())
 app.use(express.static('public'))
@@ -34,6 +34,15 @@ app.get('/api/users', async (req, res) => {
     return { _id: user._id, username: user.username }
   })
   res.send(newUser)
+})
+
+app.post('/api/users/:_id/exercises', async (req, res) => {
+  const { _id } = req.params
+  const { description, date, duration } = req.body
+  const exercise = await Exercise.create({ description, date, duration, id: _id })
+  const user = await User.findById(_id)
+
+  res.json({ username: user.username, description: exercise.description, date: exercise.date.toDateString(), duration: exercise.duration, _id: _id })
 })
 
 const listener = app.listen(process.env.PORT || 3000, () => {

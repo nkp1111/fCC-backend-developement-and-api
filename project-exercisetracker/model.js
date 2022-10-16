@@ -9,4 +9,22 @@ const userSchema = new mongoose.Schema({
 
 const User = mongoose.model('User', userSchema)
 
-module.exports = User
+const exerciseSchema = new mongoose.Schema({
+  username: {
+    type: String,
+  },
+  description: {
+    type: String
+  },
+  duration: {
+    type: Number,
+  },
+  date: {
+    type: Date,
+    default: new Date()
+  }
+})
+
+const Exercise = mongoose.model('Exercise', exerciseSchema)
+
+module.exports = { User, Exercise }
