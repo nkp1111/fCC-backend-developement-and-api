@@ -51,7 +51,7 @@ app.get('/api/users/:_id/logs', async (req, res) => {
   const { _id } = req.params
   const { from, to, limit } = req.query
   const user = await User.findById(_id)
-  console.log(from, to, limit)
+
   let exercises = await Exercise.find({ username: user.username })
   // if (from && !to) {
   //   exercises = await Exercise.find({id: _id, date: {$gte: new Date(from)}})
@@ -60,11 +60,9 @@ app.get('/api/users/:_id/logs', async (req, res) => {
   //   exercises = await Exercise.find({id: _id, date: { $lte: new Date(to)}})
   // }
   if (from && to) {
-    console.log("1", exercises.length)
     exercises = await Exercise.find({ username: user.username, date: { $gt: new Date(from), $lt: new Date(to) } })
-    console.log("2", exercises.length)
   }
-  console.log("3", exercises.length)
+
   if (limit || limit !== undefined) {
     exercises = exercises.slice(0, limit)
   }
@@ -72,7 +70,6 @@ app.get('/api/users/:_id/logs', async (req, res) => {
   const exerciseMapped = exercises.map(exercise => {
     return { description: exercise.description, duration: exercise.duration, date: exercise.date.toDateString(), }
   })
-  // console.log(_id, count, user, exercises)
 
   res.json({ username: user.username, count, _id, log: exerciseMapped })
 })
