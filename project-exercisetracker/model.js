@@ -11,13 +11,13 @@ const User = mongoose.model('User', userSchema)
 
 const exerciseSchema = new mongoose.Schema({
   username: {
-    type: String,
+    type: String
   },
   description: {
     type: String
   },
   duration: {
-    type: Number,
+    type: Number
   },
   date: {
     type: Date,

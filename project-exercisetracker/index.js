@@ -37,25 +37,47 @@ app.get('/api/users', async (req, res) => {
 })
 
 app.post('/api/users/:_id/exercises', async (req, res) => {
+  /* for adding new exercises to database */
   const { _id } = req.params
   const { description, date, duration } = req.body
-  const exercise = await Exercise.create({ description, date, duration, id: _id })
   const user = await User.findById(_id)
+  const exercise = await Exercise.create({ description, date, duration, username: user.username })
 
-  res.json({ username: user.username, description: exercise.description, date: exercise.date.toDateString(), duration: exercise.duration, _id: _id })
+  res.json({ username: user.username, description: exercise.description, date: exercise.date.toDateString(), duration: exercise.duration, _id })
 })
 
 app.get('/api/users/:_id/logs', async (req, res) => {
+  /* to get all exercises of one user */
   const { _id } = req.params
+  const { from, to, limit } = req.query
   const user = await User.findById(_id)
-  const exercises = await Exercise.find({ id: _id })
+  console.log(from, to, limit)
+  let exercises = await Exercise.find({ username: user.username })
+  // if (from && !to) {
+  //   exercises = await Exercise.find({id: _id, date: {$gte: new Date(from)}})
+  // }
+  // if (!from && to) {
+  //   exercises = await Exercise.find({id: _id, date: { $lte: new Date(to)}})
+  // }
+  if (from && to) {
+    console.log("1", exercises.length)
+    exercises = await Exercise.find({ username: user.username, date: { $gt: new Date(from), $lt: new Date(to) } })
+    console.log("2", exercises.length)
+  }
+  console.log("3", exercises.length)
+  if (limit || limit !== undefined) {
+    exercises = exercises.slice(0, limit)
+  }
   const count = exercises.length
   const exerciseMapped = exercises.map(exercise => {
-    return { description: exercise.description, duration: exercise.duration, date: exercise.date }
+    return { description: exercise.description, duration: exercise.duration, date: exercise.date.toDateString(), }
   })
+  // console.log(_id, count, user, exercises)
+
   res.json({ username: user.username, count, _id, log: exerciseMapped })
 })
 
 const listener = app.listen(process.env.PORT || 3000, () => {
   console.log('Your app is listening on port ' + listener.address().port)
 })
+
